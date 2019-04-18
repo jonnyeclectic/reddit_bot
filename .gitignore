@@ -4,3 +4,4 @@ client_secrets.json
 results/
 api/__pycache__/
 api/auth/__pycache__/
+.config.yml
