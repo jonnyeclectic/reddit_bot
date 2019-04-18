@@ -72,7 +72,7 @@ class FileHelper:
         self.update_filename_with_timestamp('logs_file')
         filename = '{}/{}'.format(self.config['files']['directory'], self.logs_file)
         with open(filename, "a+") as f:
-            f.write(content)
+            f.write('{}\n'.format(content))
             f.close()
 
     @staticmethod

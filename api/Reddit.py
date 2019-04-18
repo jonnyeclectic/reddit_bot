@@ -127,8 +127,12 @@ class RedditBot(FileHelper):
                     limit=self.config['posts']['post_limit'])
             except Exception as message:
                 self.bot_log('Error grabbing posts for subreddit: {}'.format(message))
-            self.bot_log('Finished grabbing posts for subreddit.')
+                continue
+
+            self.bot_log('Finished grabbing {} posts for subreddit.'.format(len(subreddit_posts)))
             self.process_popular_activity()
+        if self.subreddit_posts is None:
+            raise Exception('Did not find any content.')
         self.store_outro()
         self.text_to_speech()
         self.upload_speech()
@@ -160,7 +164,7 @@ class RedditBot(FileHelper):
         :return: str
         """
         self.bot_log('Getting human readable list of subreddits.')
-        content = None
+        content = ''
         for count, subreddit in enumerate(self.subreddits):
             if len(self.subreddits) == 1:
                 content += 'r/{}.'.format(subreddit)
