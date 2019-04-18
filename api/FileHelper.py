@@ -16,6 +16,8 @@ class FileHelper:
         self.destination = self.config['destination']
         self.timestamp = None
 
+        self.update_filenames_with_timestamp()
+
     def remove_file(self, file):
         """
         Removes file.

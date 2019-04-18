@@ -92,7 +92,6 @@ class RedditBot(FileHelper):
         """
         Fetches all comments in subreddit posts and stores them based on configs.
         """
-        self.update_filenames_with_timestamp()
         self.store_intro()
         post_counter = 0
         try_counter = 0
@@ -126,6 +125,7 @@ class RedditBot(FileHelper):
         """
         Creates and uploads audio files of Reddit posts and comments.
         """
+        self.bot_log('Getting comment audio and text from Reddit.')
         self.bot_log('Iterating subreddits.')
         for subreddit in self.subreddits:
             try:
@@ -143,6 +143,7 @@ class RedditBot(FileHelper):
         self.store_outro()
         self.text_to_speech()
         self.upload_speech()
+        self.bot_log('Finished getting comment audio and text.')
 
     def store_intro(self):
         """
