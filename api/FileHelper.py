@@ -29,7 +29,6 @@ class FileHelper:
         Creates text to speech audio file from subreddit and comments file.
         """
         self.bot_log('Converting text to speech.')
-        self.update_filename_with_timestamp('mp4_file')
         command = 'say'
         if shutil.which(command) is not None:
             os.system('{} -o {}/{} -f {}/{}'.format(command,
@@ -55,7 +54,6 @@ class FileHelper:
         :param content: str
         :param clean_flag: bool
         """
-        self.update_filename_with_timestamp('text_file')
         filename = '{}/{}'.format(self.config['files']['directory'], self.text_file)
         if clean_flag:
             content = self.clean(content)
@@ -69,7 +67,6 @@ class FileHelper:
 
         :param content: str
         """
-        self.update_filename_with_timestamp('logs_file')
         filename = '{}/{}'.format(self.config['files']['directory'], self.logs_file)
         with open(filename, "a+") as f:
             f.write('{}\n'.format(content))
@@ -115,14 +112,12 @@ class FileHelper:
             GoogleAuthentication.upload_file(self.mp4_file, self.config['files']['directory'])
             self.remove_file(self.mp4_file)
 
-    def update_filename_with_timestamp(self, filename_variable):
+    def update_filenames_with_timestamp(self):
         """
-         Updates filename with timestamp.
-
-         :param filename_variable: str
+         Updates filenames with timestamp.
          """
-        filename = getattr(self, filename_variable)
-        if self.timestamp is None or self.timestamp not in filename:
+        for filename_variable in ['text_file', 'mp4_file', 'logs_file']:
+            filename = getattr(self, filename_variable)
             self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
             updated_filename = "{}_{}".format(self.timestamp, filename)
             setattr(self, filename_variable, updated_filename)

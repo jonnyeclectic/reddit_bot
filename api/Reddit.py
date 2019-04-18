@@ -67,11 +67,12 @@ class RedditBot(FileHelper):
         self.bot_log('Evaluating comments.')
         scored_comments = {}
         for comment in comments:
-            if isinstance(comment, MoreComments) \
-                    or (comment.score < self.config['comments']['score_threshold']
-                        and not comment.distinguished):
-                self.bot_log('Skipping comment.')
-                break
+            if isinstance(comment, MoreComments):
+                continue
+
+            if comment.score < self.config['comments']['score_threshold'] and not comment.distinguished:
+                self.bot_log('Skipping low scored comment: {}.'.format(comment.score))
+                continue
 
             while comment.score in scored_comments.keys():
                 comment.score += 1
@@ -88,7 +89,7 @@ class RedditBot(FileHelper):
         """
         Fetches all comments in subreddit posts and stores them based on configs.
         """
-        self.update_filename_with_timestamp('text_file')
+        self.update_filenames_with_timestamp()
         self.store_intro()
         post_counter = 0
         try_counter = 0
