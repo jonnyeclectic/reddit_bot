@@ -96,6 +96,8 @@ class RedditBot(FileHelper):
             try:
                 self.bot_log('Iterating posts.')
                 for post in self.subreddit_posts:
+                    if post_counter >= self.post_limit:
+                        break
                     post = self.prepare_post(post=post)
                     self.get_all_comments(post)
 
@@ -108,6 +110,7 @@ class RedditBot(FileHelper):
                         self.store_comment(sorted_comment)
                     self.store_segue()
                     post_counter += 1
+                break
             except Exception as message:
                 self.bot_log("Error iterating posts and comments: {}".format(message))
                 if try_counter > 5:
