@@ -129,7 +129,7 @@ class RedditBot(FileHelper):
                 self.bot_log('Error grabbing posts for subreddit: {}'.format(message))
                 continue
 
-            self.bot_log('Finished grabbing {} posts for subreddit.'.format(len(self.subreddit_posts)))
+            self.bot_log('Finished grabbing posts for subreddit.')
             self.process_popular_activity()
         if self.subreddit_posts is None:
             raise Exception('Did not find any content.')

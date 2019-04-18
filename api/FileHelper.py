@@ -83,7 +83,6 @@ class FileHelper:
         :param content: str
         :return: str
         """
-        self.bot_log('Cleaning content.')
         content += ' '
         import re
         # @TODO: Parse out any other rules in post
