@@ -12,6 +12,7 @@ class FileHelper:
         self.config = yaml.safe_load(open("../.config.yml"))
         self.text_file = self.config['files']['text_filename']
         self.mp4_file = self.config['files']['audio_filename']
+        self.timestamp = None
 
     def remove_file(self, file):
         """
@@ -90,10 +91,12 @@ class FileHelper:
         """
          Uploads text to speech audio file to Google Drive
          """
-        GoogleAuthentication.upload_file(self.text_file, self.config['files']['directory'])
-        GoogleAuthentication.upload_file(self.mp4_file, self.config['files']['directory'])
-        self.remove_file(self.text_file)
-        self.remove_file(self.mp4_file)
+        if os.path.isfile(self.text_file):
+            GoogleAuthentication.upload_file(self.text_file, self.config['files']['directory'])
+            self.remove_file(self.text_file)
+        if os.path.isfile(self.mp4_file):
+            GoogleAuthentication.upload_file(self.mp4_file, self.config['files']['directory'])
+            self.remove_file(self.mp4_file)
 
     def update_filename_with_timestamp(self, filename_variable):
         """
@@ -102,6 +105,8 @@ class FileHelper:
          :param filename_variable: str
          """
         filename = getattr(self, filename_variable)
-        timestamp = datetime.datetime.now().strftime("%I:%M%p")
-        updated_filename = "{}_{}".format(timestamp, filename)
+        if self.timestamp is None:
+            self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
+
+        updated_filename = "{}_{}".format(self.timestamp, filename)
         setattr(self, filename_variable, updated_filename)
