@@ -122,7 +122,6 @@ class FileHelper:
 
          :param filename_variable: str
          """
-        self.bot_log('Updating timestamp for {}.'.format(filename_variable))
         filename = getattr(self, filename_variable)
         if self.timestamp is None or self.timestamp not in filename:
             self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
