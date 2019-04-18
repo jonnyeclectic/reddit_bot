@@ -9,7 +9,7 @@ import yaml
 class FileHelper:
 
     def __init__(self):
-        self.config = yaml.safe_load(open("../.config.yml"))
+        self.config = yaml.safe_load(open("conf/.config.yml"))
         self.text_file = self.config['files']['text_filename']
         self.mp4_file = self.config['files']['audio_filename']
         self.log_file = self.config['files']['log_filename']
