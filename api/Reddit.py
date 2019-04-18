@@ -49,40 +49,40 @@ class RedditBot(FileHelper):
 
         :type post: Submission
         """
-        self.log('Getting all comments.')
+        self.bot_log('Getting all comments.')
         count = 0
         while True:
             try:
                 post.comments.replace_more(limit=None)
                 comments = post.comments.list()
-                self.log('Finished getting {} comments.'.format(len(comments)))
+                self.bot_log('Finished getting {} comments.'.format(len(comments)))
                 break
             except Exception as message:
-                self.log('Error getting all comments.')
+                self.bot_log('Error getting all comments.')
                 if count > 5:
                     raise Exception(message)
                 count += 1
                 pass
 
-        self.log('Evaluating comments.')
+        self.bot_log('Evaluating comments.')
         scored_comments = {}
         for comment in comments:
             if isinstance(comment, MoreComments) \
                     or (comment.score < self.config['comments']['score_threshold']
                         and not comment.distinguished):
-                self.log('Skipping comment.')
+                self.bot_log('Skipping comment.')
                 continue  # break
 
             while comment.score in scored_comments.keys():
                 comment.score += 1
-            self.log('Saving comment for sorting.')
+            self.bot_log('Saving comment for sorting.')
             scored_comments.update({comment.score: comment})
 
         sorted(scored_comments.keys(), reverse=True)
 
         from collections import OrderedDict
         self.sorted_comments = OrderedDict(scored_comments)
-        self.log('Finished getting, storing, and sorting comments.')
+        self.bot_log('Finished getting, storing, and sorting comments.')
 
     def process_popular_activity(self):
         """
@@ -94,7 +94,7 @@ class RedditBot(FileHelper):
         try_counter = 0
         while True:
             try:
-                self.log('Iterating posts.')
+                self.bot_log('Iterating posts.')
                 for post in self.subreddit_posts:
                     post = self.prepare_post(post=post)
                     self.get_all_comments(post)
@@ -102,14 +102,14 @@ class RedditBot(FileHelper):
                     comment_counter = 0
                     for sorted_comment in self.sorted_comments.values():
                         if comment_counter >= self.config['comments']['comment_limit']:
-                            self.log("Reached post's comment limit at: {}".format(comment_counter))
+                            self.bot_log("Reached post's comment limit at: {}".format(comment_counter))
                             break
                         comment_counter += 1
                         self.store_comment(sorted_comment)
                     self.store_segue()
                     post_counter += 1
             except Exception as message:
-                self.log("Error iterating posts and comments: {}".format(message))
+                self.bot_log("Error iterating posts and comments: {}".format(message))
                 if try_counter > 5:
                     raise Exception(message)
                 time.sleep(30)
@@ -119,15 +119,15 @@ class RedditBot(FileHelper):
         """
         Creates and uploads audio files of Reddit posts and comments.
         """
-        self.log('Iterating subreddits.')
+        self.bot_log('Iterating subreddits.')
         for subreddit in self.subreddits:
             try:
                 self.subreddit_posts = self.reddit_client.subreddit(subreddit).top(
                     time_filter=self.config['posts']['time_filter'],
                     limit=self.config['posts']['post_limit'])
             except Exception as message:
-                self.log('Error grabbing posts for subreddit: {}'.format(message))
-            self.log('Finished grabbing posts for subreddit.')
+                self.bot_log('Error grabbing posts for subreddit: {}'.format(message))
+            self.bot_log('Finished grabbing posts for subreddit.')
             self.process_popular_activity()
         self.store_outro()
         self.text_to_speech()
@@ -137,9 +137,9 @@ class RedditBot(FileHelper):
         """
         Writes intro for the file about the subreddits.
         """
-        self.log('Storing intro.')
+        self.bot_log('Storing intro.')
         content = "Here's what's happening with "
-        content = self.get_human_readable_subreddit_list(content)
+        content += self.get_human_readable_subreddit_list()
         content += "\nLet's get started."
         self.store(content)
 
@@ -147,7 +147,7 @@ class RedditBot(FileHelper):
         """
         Writes intro for the file about the subreddits and comments.
         """
-        self.log('Storing outro.')
+        self.bot_log('Storing outro.')
         content = '\nThat concludes our look at '
         content += self.get_human_readable_subreddit_list()
         content += '\nSmash that like button for less anxiety.'
@@ -159,7 +159,7 @@ class RedditBot(FileHelper):
 
         :return: str
         """
-        self.log('Getting human readable list of subreddits.')
+        self.bot_log('Getting human readable list of subreddits.')
         content = None
         for count, subreddit in enumerate(self.subreddits):
             if len(self.subreddits) == 1:
@@ -180,7 +180,7 @@ class RedditBot(FileHelper):
         """
         Writes segue to next post to file.
         """
-        self.log('Storing segue.')
+        self.bot_log('Storing segue.')
         self.store("\n Hmmm...kay\n")
 
     def store_post(self, post):
@@ -189,7 +189,7 @@ class RedditBot(FileHelper):
 
         :type post: Submission
         """
-        self.log('Storing post.')
+        self.bot_log('Storing post.')
         self.store('\n***{}***\n {}\n\n'.format(post.title, post.selftext))
         self.store('[[{} - {}]]'.format(post.author, post.score), False)
         self.store(FileHelper.get_dictation_pause(1000), False)
@@ -200,7 +200,7 @@ class RedditBot(FileHelper):
 
         :type comment: Comment
         """
-        self.log('Storing comment.')
+        self.bot_log('Storing comment.')
         self.store('\n* {}\n'.format(comment.body))
         self.store('[[{} - {}]]'.format(comment.author, comment.score), False)
         self.store(FileHelper.get_dictation_pause(), False)

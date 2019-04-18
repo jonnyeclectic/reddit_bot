@@ -19,7 +19,7 @@ class FileHelper:
         """
         Removes file.
         """
-        self.log('Removing file: {}.'.format(file))
+        self.bot_log('Removing file: {}.'.format(file))
         filename = '{}/{}'.format(self.config['files']['directory'], file)
         if os.path.isfile(filename):
             os.remove(filename)
@@ -28,7 +28,7 @@ class FileHelper:
         """
         Creates text to speech audio file from subreddit and comments file.
         """
-        self.log('Converting text to speech.')
+        self.bot_log('Converting text to speech.')
         self.update_filename_with_timestamp('mp4_file')
         command = 'say'
         if shutil.which(command) is not None:
@@ -63,9 +63,9 @@ class FileHelper:
             f.write(content)
             f.close()
 
-    def log(self, content):
+    def bot_log(self, content):
         """
-        Write content to file.
+        Write content to log file.
 
         :param content: str
         """
@@ -83,7 +83,7 @@ class FileHelper:
         :param content: str
         :return: str
         """
-        self.log('Cleaning content.')
+        self.bot_log('Cleaning content.')
         content += ' '
         import re
         # @TODO: Parse out any other rules in post
@@ -108,7 +108,7 @@ class FileHelper:
         """
          Uploads text to speech audio file to Google Drive
          """
-        self.log('Uploading speech.')
+        self.bot_log('Uploading speech.')
         if os.path.isfile(self.text_file):
             GoogleAuthentication.upload_file(self.text_file, self.config['files']['directory'])
             self.remove_file(self.text_file)
@@ -122,7 +122,7 @@ class FileHelper:
 
          :param filename_variable: str
          """
-        self.log('Updating timestamp for {}.'.format(filename_variable))
+        self.bot_log('Updating timestamp for {}.'.format(filename_variable))
         filename = getattr(self, filename_variable)
         if self.timestamp is None or self.timestamp not in filename:
             self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
