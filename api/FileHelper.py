@@ -18,12 +18,13 @@ class FileHelper:
 
         self.update_filenames_with_timestamp()
 
-    def remove_file(self, file):
+    def remove_file(self, filename):
         """
         Removes file.
+
+        :param filename: str
         """
-        self.bot_log('Removing file: {}.'.format(file))
-        filename = '{}/{}'.format(self.destination, file)
+        self.bot_log('Removing file: {}.'.format(filename))
         if os.path.isfile(filename):
             os.remove(filename)
 
