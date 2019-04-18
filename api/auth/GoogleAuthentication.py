@@ -13,7 +13,7 @@ class GoogleAuthentication(object):
         :rtype: GoogleAuth
         """
         g_auth = GoogleAuth()
-        config = yaml.safe_load(open("../.config.yml"))
+        config = yaml.safe_load(open(".config.yml"))
         credentials = config['google_drive']['cached_token_filename']
         g_auth.LoadCredentialsFile(credentials)
         if g_auth.credentials is None:
