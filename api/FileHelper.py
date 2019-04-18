@@ -12,7 +12,7 @@ class FileHelper:
         self.config = yaml.safe_load(open("conf/.config.yml"))
         self.text_file = self.config['files']['text_filename']
         self.mp4_file = self.config['files']['audio_filename']
-        self.log_file = self.config['files']['log_filename']
+        self.logs_file = self.config['files']['logs_filename']
         self.timestamp = None
 
     def remove_file(self, file):
@@ -69,8 +69,8 @@ class FileHelper:
 
         :param content: str
         """
-        self.update_filename_with_timestamp('log_file')
-        filename = '{}/{}'.format(self.config['files']['directory'], self.log_file)
+        self.update_filename_with_timestamp('logs_file')
+        filename = '{}/{}'.format(self.config['files']['directory'], self.logs_file)
         with open(filename, "a+") as f:
             f.write(content)
             f.close()
