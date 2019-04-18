@@ -85,18 +85,25 @@ class RedditBot(FileHelper):
         self.update_filename_with_timestamp('text_file')
         self.store_intro()
         post_counter = 0
-        for post in self.subreddit_posts:
-            post = self.prepare_post(post=post)
-            self.get_all_comments(post)
+        try_counter = 0
+        while True:
+            try:
+                for post in self.subreddit_posts:
+                    post = self.prepare_post(post=post)
+                    self.get_all_comments(post)
 
-            comment_counter = 0
-            for sorted_comment in self.sorted_comments.values():
-                if comment_counter >= self.config['comments']['comment_limit']:
-                    break
-                comment_counter += 1
-                self.store_comment(sorted_comment)
-            self.store_segue()
-            post_counter += 1
+                    comment_counter = 0
+                    for sorted_comment in self.sorted_comments.values():
+                        if comment_counter >= self.config['comments']['comment_limit']:
+                            break
+                        comment_counter += 1
+                        self.store_comment(sorted_comment)
+                    self.store_segue()
+                    post_counter += 1
+            except ResponseException as message:
+                if try_counter > 5:
+                    raise ResponseException(message)
+                try_counter += 1
 
     def get_comment_audio(self):
         """
