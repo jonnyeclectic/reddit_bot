@@ -1,4 +1,6 @@
 .bot_credentials.txt
 .idea/
 client_secrets.json
-results/**
+results/
+api/__pycache__/
+api/auth/__pycache__/
