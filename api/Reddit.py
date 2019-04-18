@@ -2,6 +2,7 @@
 from FileHelper import FileHelper
 from praw import Reddit
 from praw.models import MoreComments
+import time
 
 
 class RedditBot(FileHelper):
@@ -103,6 +104,7 @@ class RedditBot(FileHelper):
             except ResponseException as message:
                 if try_counter > 5:
                     raise ResponseException(message)
+                time.sleep(30)
                 try_counter += 1
 
     def get_comment_audio(self):
