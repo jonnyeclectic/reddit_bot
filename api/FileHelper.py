@@ -55,6 +55,7 @@ class FileHelper:
         :param content: str
         :param clean_flag: bool
         """
+        self.update_filename_with_timestamp('text_file')
         filename = '{}/{}'.format(self.config['files']['directory'], self.text_file)
         if clean_flag:
             content = self.clean(content)
