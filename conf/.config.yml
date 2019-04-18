@@ -1,0 +1,28 @@
+
+comments:
+ sort_by: 'top'
+ comment_limit: 2
+ score_threshold: 200
+ sorting_types: {'controversial', 'gilded', 'hot', 'new', 'rising', 'top'}
+
+posts:
+ time_filter: 'day'
+ post_limit: 2
+
+subreddits:
+ subreddit_titles: {'jokes'}
+
+files:
+ directory: 'results'
+ text_filename: 'best_of_reddit.txt'
+ audio_filename: 'spoken_best_of_reddit.mp4'
+
+google_drive:
+ cached_token_filename: '.bot_credentials.txt'
+
+reddit_bot:
+ client_id: <your_client_id>
+ client_secret: <your_client_secret_
+ user_agent: '<EXAMPLE:><your_app_deployment_location>:reddit.<your_bot_purpose>:v1 (by /u/<your_reddit_login_username>)'
+ username: <your_reddit_login_username>
+ password: <your_reddit_login_password>
