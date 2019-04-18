@@ -1,9 +1,8 @@
 from pydrive.auth import GoogleAuth
+import yaml
 
 
 class GoogleAuthentication(object):
-    # Filename for storing Google Drive credentials
-    CREDENTIALS: str = '.bot_credentials.txt'
 
     @staticmethod
     def get_auth_token():
@@ -14,7 +13,9 @@ class GoogleAuthentication(object):
         :rtype: GoogleAuth
         """
         g_auth = GoogleAuth()
-        g_auth.LoadCredentialsFile(GoogleAuthentication.CREDENTIALS)
+        config = yaml.safe_load(open("../.config.yml"))
+        credentials = config['google_drive']['cached_token_filename']
+        g_auth.LoadCredentialsFile(credentials)
         if g_auth.credentials is None:
             # Authenticate via browser if credentials are not set
             g_auth.LocalWebserverAuth()
@@ -25,7 +26,7 @@ class GoogleAuthentication(object):
             # Initialize the saved credentials
             g_auth.Authorize()
 
-        g_auth.SaveCredentialsFile(GoogleAuthentication.CREDENTIALS)
+        g_auth.SaveCredentialsFile(credentials)
         return g_auth
 
     @staticmethod

@@ -5,77 +5,29 @@ from praw.models import MoreComments
 
 
 class RedditBot(FileHelper):
-    # Number of comments per post
-    COMMENT_LIMIT = 8
-    # Minimum comment upvotes required
-    SCORE_THRESHOLD = 200
 
     def __init__(self):
+        super(RedditBot, self).__init__()
         self.reddit_client = self.get_reddit_client()
-        self.comment_types = self.get_comment_types()
-        self.subreddits = self.get_subreddits()
-        self.comment_options = RedditBot.get_comment_options()
+        self.comment_types = self.config['comments']['sorting_types']
+        self.subreddits = self.config['subreddits']['subreddit_titles']
         self.subreddit_posts = None
         self.sorted_comments = None
-        self.post_limit = 4
+        self.post_limit = self.config['posts']['post_limit']
 
-        super(RedditBot, self).__init__()
-
-    @staticmethod
-    def get_reddit_client():
+    def get_reddit_client(self):
         """
         Gets client for Reddit.
 
         :rtype: Reddit
         """
-        pass
 
-        # return Reddit(
-        #     client_id=client_id,
-        #     client_secret=client_secret,
-        #     user_agent=user_agent,
-        #     username=username,
-        #     password=password)
-
-    @staticmethod
-    def get_comment_types():
-        """
-        Gets sorting types for comments.
-
-        :rtype: list
-        """
-        return [
-            'controversial',
-            'gilded',
-            'hot',
-            'new',
-            'rising',
-            'top'
-        ]
-
-    @staticmethod
-    def get_subreddits():
-        """
-        Gets subreddits.
-
-        :rtype: list
-        """
-        return [
-            # 'askReddit',
-            'jokes'
-        ]
-
-    @staticmethod
-    def get_comment_options():
-        """
-        Gets sorting and filter options for comments.
-
-        :rtype: dict
-        """
-        return {
-            'sort_by': 'top',
-            'limit': RedditBot.COMMENT_LIMIT
-        }
+        return Reddit(
+            client_id=self.config['reddit_bot']['client_id'],
+            client_secret=self.config['reddit_bot']['client_secret'],
+            user_agent=self.config['reddit_bot']['user_agent'],
+            username=self.config['reddit_bot']['username'],
+            password=self.config['reddit_bot']['password'])
 
     def prepare_post(self, post):
         """
@@ -85,8 +37,8 @@ class RedditBot(FileHelper):
         :type post: Submission
         :rtype: Submission
         """
-        post.comment_sort = self.comment_options.get('sort_by')
-        post.comment_limit = self.comment_options.get('limit')
+        post.comment_sort = self.config['comments']['sort_by']
+        post.comment_limit = self.config['comments']['comment_limit']
         self.store_post(post)
         return post
 
@@ -112,7 +64,7 @@ class RedditBot(FileHelper):
         for comment in comments:
             if isinstance(comment, MoreComments) \
                     or (
-                    comment.score < self.SCORE_THRESHOLD
+                    comment.score < self.config['comments']['score_threshold']
                     and not comment.distinguished
             ):
                 continue
@@ -139,7 +91,7 @@ class RedditBot(FileHelper):
 
             comment_counter = 0
             for sorted_comment in self.sorted_comments.values():
-                if comment_counter >= RedditBot.COMMENT_LIMIT:
+                if comment_counter >= self.config['comments']['comment_limit']:
                     break
                 comment_counter += 1
                 self.store_comment(sorted_comment)
@@ -151,8 +103,9 @@ class RedditBot(FileHelper):
         Creates and uploads audio files of Reddit posts and comments.
         """
         for subreddit in self.subreddits:
-            self.subreddit_posts = self.reddit_client.subreddit(subreddit).top(time_filter='day',
-                                                                               limit=self.post_limit)
+            self.subreddit_posts = self.reddit_client.subreddit(subreddit).top(
+                time_filter=self.config['posts']['time_filter'],
+                limit=self.config['posts']['post_limit'])
             self.process_popular_activity()
         self.store_outro()
         self.text_to_speech()
@@ -212,6 +165,7 @@ class RedditBot(FileHelper):
         """
         self.store('\n***{}***\n {}\n\n'.format(post.title, post.selftext))
         self.store('[[{} - {}]]'.format(post.author, post.score), False)
+        self.store(FileHelper.get_dictation_pause(), False)
 
     def store_comment(self, comment):
         """
@@ -221,9 +175,8 @@ class RedditBot(FileHelper):
         """
         self.store('\n* {}\n'.format(comment.body))
         self.store('[[{} - {}]]'.format(comment.author, comment.score), False)
-        self.store(FileHelper.get_dictation_pause(), False)
+        self.store(FileHelper.get_dictation_pause(1000), False)
 
 
 bot = RedditBot()
 bot.get_comment_audio()
-

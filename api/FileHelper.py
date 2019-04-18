@@ -2,20 +2,22 @@ from auth.GoogleAuthentication import GoogleAuthentication
 
 import datetime
 import os
+import shutil
+import yaml
 
 
 class FileHelper:
 
     def __init__(self):
-        self.directory = 'results'
-        self.text_file = 'best_of_reddit.txt'
-        self.mp4_file = 'spoken_best_of_reddit.mp4'
+        self.config = yaml.safe_load(open("../.config.yml"))
+        self.text_file = self.config['files']['text_filename']
+        self.mp4_file = self.config['files']['audio_filename']
 
     def remove_file(self, file):
         """
         Removes file.
         """
-        filename = '{}/{}'.format(self.directory, file)
+        filename = '{}/{}'.format(self.config['files']['directory'], file)
         if os.path.isfile(filename):
             os.remove(filename)
 
@@ -24,7 +26,13 @@ class FileHelper:
         Creates text to speech audio file from subreddit and comments file.
         """
         self.update_filename_with_timestamp('mp4_file')
-        os.system('say -o {}/{} -f {}/{}'.format(self.directory, self.mp4_file, self.directory, self.text_file))
+        command = 'say'
+        if shutil.which(command) is not None:
+            os.system('{} -o {}/{} -f {}/{}'.format(command,
+                                                    self.config['files']['directory'],
+                                                    self.mp4_file,
+                                                    self.config['files']['directory'],
+                                                    self.text_file))
 
     @staticmethod
     def get_dictation_pause(duration=650):
@@ -43,7 +51,7 @@ class FileHelper:
         :param content: str
         :param clean_flag: bool
         """
-        filename = '{}/{}'.format(self.directory, self.text_file)
+        filename = '{}/{}'.format(self.config['files']['directory'], self.text_file)
         if clean_flag:
             content = self.clean(content)
         with open(filename, "a+") as f:
@@ -82,8 +90,8 @@ class FileHelper:
         """
          Uploads text to speech audio file to Google Drive
          """
-        GoogleAuthentication.upload_file(self.text_file, self.directory)
-        GoogleAuthentication.upload_file(self.mp4_file, self.directory)
+        GoogleAuthentication.upload_file(self.text_file, self.config['files']['directory'])
+        GoogleAuthentication.upload_file(self.mp4_file, self.config['files']['directory'])
         self.remove_file(self.text_file)
         self.remove_file(self.mp4_file)
 
