@@ -71,14 +71,14 @@ class FileHelper:
         import re
         # @TODO: Parse out any other rules in post
 
-        content = re.sub('\\(*.http.*?\\)', ' ', content)
-        content = re.sub(' *.http.*? ', ' ', content)
-        content = re.sub('fuck', 'fcuk', content)
-        content = re.sub('shit', 'shiz', content)
-        content = re.sub('bitch', 'beach', content)
-        content = re.sub('sex', 'six', content)
-        content = re.sub(' *.com.*? ', ' ', content)
-        content = re.sub('\\[.*.\\]', ' ', content)
+        content = re.sub('\\(*.http.*?\\)', ' ', content, flags=re.IGNORECASE)
+        content = re.sub(' *.http.*? ', ' ', content, flags=re.IGNORECASE)
+        content = re.sub('fuck', 'fcuk', content, flags=re.IGNORECASE)
+        content = re.sub('shit', 'shiz', content, flags=re.IGNORECASE)
+        content = re.sub('bitch', 'beach', content, flags=re.IGNORECASE)
+        content = re.sub('sex', 'six', content, flags=re.IGNORECASE)
+        content = re.sub(' *.com.*? ', ' ', content, flags=re.IGNORECASE)
+        content = re.sub('\\[.*.\\]', ' ', content, flags=re.IGNORECASE)
 
         if 'I am a bot' in content:
             return ''
