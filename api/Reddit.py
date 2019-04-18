@@ -9,12 +9,15 @@ class RedditBot(FileHelper):
 
     def __init__(self):
         super(RedditBot, self).__init__()
-        self.reddit_client = self.get_reddit_client()
-        self.comment_types = self.config['comments']['sorting_types']
+        self.comment_options = self.config['comments']
+        self.post_options = self.config['posts']
         self.subreddits = self.config['subreddits']['subreddit_titles']
+        self.post_limit = self.config['posts']['post_limit']
+        self.reddit_bot = self.config['reddit_bot']
         self.subreddit_posts = None
         self.sorted_comments = None
-        self.post_limit = self.config['posts']['post_limit']
+
+        self.reddit_client = self.get_reddit_client()
 
     def get_reddit_client(self):
         """
@@ -24,11 +27,11 @@ class RedditBot(FileHelper):
         """
 
         return Reddit(
-            client_id=self.config['reddit_bot']['client_id'],
-            client_secret=self.config['reddit_bot']['client_secret'],
-            user_agent=self.config['reddit_bot']['user_agent'],
-            username=self.config['reddit_bot']['username'],
-            password=self.config['reddit_bot']['password'])
+            client_id=self.reddit_bot['client_id'],
+            client_secret=self.reddit_bot['client_secret'],
+            user_agent=self.reddit_bot['user_agent'],
+            username=self.reddit_bot['username'],
+            password=self.reddit_bot['password'])
 
     def prepare_post(self, post):
         """
@@ -38,8 +41,8 @@ class RedditBot(FileHelper):
         :type post: Submission
         :rtype: Submission
         """
-        post.comment_sort = self.config['comments']['sort_by']
-        post.comment_limit = self.config['comments']['comment_limit']
+        post.comment_sort = self.comment_options['sort_by']
+        post.comment_limit = self.comment_options['comment_limit']
         self.store_post(post)
         return post
 
@@ -70,7 +73,7 @@ class RedditBot(FileHelper):
             if isinstance(comment, MoreComments):
                 continue
 
-            if comment.score < self.config['comments']['score_threshold'] and not comment.distinguished:
+            if comment.score < self.comment_options['score_threshold'] and not comment.distinguished:
                 self.bot_log('Skipping low scored comment: {}.'.format(comment.score))
                 continue
 
@@ -104,7 +107,7 @@ class RedditBot(FileHelper):
 
                     comment_counter = 0
                     for sorted_comment in self.sorted_comments.values():
-                        if comment_counter >= self.config['comments']['comment_limit']:
+                        if comment_counter >= self.comment_options['comment_limit']:
                             self.bot_log("Reached post's comment limit at: {}".format(comment_counter))
                             break
                         comment_counter += 1
@@ -127,8 +130,8 @@ class RedditBot(FileHelper):
         for subreddit in self.subreddits:
             try:
                 self.subreddit_posts = self.reddit_client.subreddit(subreddit).top(
-                    time_filter=self.config['posts']['time_filter'],
-                    limit=self.config['posts']['post_limit'])
+                    time_filter=self.post_options['time_filter'],
+                    limit=self.post_options['post_limit'])
             except Exception as message:
                 self.bot_log('Error grabbing posts for subreddit: {}'.format(message))
                 continue

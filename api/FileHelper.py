@@ -13,6 +13,7 @@ class FileHelper:
         self.text_file = self.config['files']['text_filename']
         self.mp4_file = self.config['files']['audio_filename']
         self.logs_file = self.config['files']['logs_filename']
+        self.destination = self.config['destination']
         self.timestamp = None
 
     def remove_file(self, file):
@@ -20,7 +21,7 @@ class FileHelper:
         Removes file.
         """
         self.bot_log('Removing file: {}.'.format(file))
-        filename = '{}/{}'.format(self.config['files']['directory'], file)
+        filename = '{}/{}'.format(self.destination, file)
         if os.path.isfile(filename):
             os.remove(filename)
 
@@ -32,9 +33,9 @@ class FileHelper:
         command = 'say'
         if shutil.which(command) is not None:
             os.system('{} -o {}/{} -f {}/{}'.format(command,
-                                                    self.config['files']['directory'],
+                                                    self.destination,
                                                     self.mp4_file,
-                                                    self.config['files']['directory'],
+                                                    self.destination,
                                                     self.text_file))
 
     @staticmethod
@@ -54,7 +55,7 @@ class FileHelper:
         :param content: str
         :param clean_flag: bool
         """
-        filename = '{}/{}'.format(self.config['files']['directory'], self.text_file)
+        filename = '{}/{}'.format(self.destination, self.text_file)
         if clean_flag:
             content = self.clean(content)
         with open(filename, "a+") as f:
@@ -67,7 +68,7 @@ class FileHelper:
 
         :param content: str
         """
-        filename = '{}/{}'.format(self.config['files']['directory'], self.logs_file)
+        filename = '{}/{}'.format(self.destination, self.logs_file)
         with open(filename, "a+") as f:
             f.write('{}\n'.format(content))
             f.close()
@@ -106,18 +107,18 @@ class FileHelper:
          """
         self.bot_log('Uploading speech.')
         if os.path.isfile(self.text_file):
-            GoogleAuthentication.upload_file(self.text_file, self.config['files']['directory'])
+            GoogleAuthentication.upload_file(self.text_file, self.destination)
             self.remove_file(self.text_file)
         if os.path.isfile(self.mp4_file):
-            GoogleAuthentication.upload_file(self.mp4_file, self.config['files']['directory'])
+            GoogleAuthentication.upload_file(self.mp4_file, destination)
             self.remove_file(self.mp4_file)
 
     def update_filenames_with_timestamp(self):
         """
          Updates filenames with timestamp.
          """
+        self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
         for filename_variable in ['text_file', 'mp4_file', 'logs_file']:
             filename = getattr(self, filename_variable)
-            self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
             updated_filename = "{}_{}".format(self.timestamp, filename)
             setattr(self, filename_variable, updated_filename)
