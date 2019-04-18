@@ -109,21 +109,24 @@ class FileHelper:
          Uploads text to speech audio file to Google Drive
          """
         self.bot_log('Attempting to upload speech.')
-        text_file = '{}/{}'.format(self.destination, self.text_file)
-        mp4_file = '{}/{}'.format(self.destination, self.mp4_file)
-        if os.path.isfile(text_file):
+        text_file_path = '{}/{}'.format(self.destination, self.text_file)
+        if os.path.isfile(text_file_path):
             self.bot_log('Uploading speech script.')
-            result = GoogleAuthentication.upload_file(text_file)
-            if not result:
-                self.bot_log('Failed uploading speech script.')
-            self.remove_file(text_file)
+            try:
+                GoogleAuthentication.upload_file(self.text_file, self.destination)
+            except Exception as message:
+                self.bot_log('Error uploading speech script: {}'.format(message))
 
-        if os.path.isfile(mp4_file):
+            self.remove_file(text_file_path)
+
+        mp4_file_path = '{}/{}'.format(self.destination, self.mp4_file)
+        if os.path.isfile(mp4_file_path):
             self.bot_log('Uploading speech audio.')
-            result = GoogleAuthentication.upload_file(mp4_file)
-            if not result:
-                self.bot_log('Failed uploading speech audio.')
-            self.remove_file(mp4_file)
+            try:
+                GoogleAuthentication.upload_file(self.mp4_file, self.destination)
+            except Exception as message:
+                self.bot_log('Error uploading speech audio: {}'.format(message))
+            self.remove_file(mp4_file_path)
 
     def update_filenames_with_timestamp(self):
         """

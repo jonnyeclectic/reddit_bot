@@ -36,7 +36,6 @@ class GoogleAuthentication(object):
 
         :type filename: str
         :type path: str
-        :rtype bool
         """
         path_filename = filename
         if path is not None:
@@ -56,4 +55,3 @@ class GoogleAuthentication(object):
                 count += 1
 
         upload_request.execute()
-        return True
