@@ -101,9 +101,9 @@ class RedditBot(FileHelper):
                         self.store_comment(sorted_comment)
                     self.store_segue()
                     post_counter += 1
-            except ResponseException as message:
+            except Exception as message:
                 if try_counter > 5:
-                    raise ResponseException(message)
+                    raise Exception(message)
                 time.sleep(30)
                 try_counter += 1
 
