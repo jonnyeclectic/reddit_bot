@@ -126,6 +126,5 @@ class FileHelper:
         filename = getattr(self, filename_variable)
         if self.timestamp is None:
             self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
-
-        updated_filename = "{}_{}".format(self.timestamp, filename)
-        setattr(self, filename_variable, updated_filename)
+            updated_filename = "{}_{}".format(self.timestamp, filename)
+            setattr(self, filename_variable, updated_filename)
