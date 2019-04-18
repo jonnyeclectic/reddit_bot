@@ -71,7 +71,7 @@ class RedditBot(FileHelper):
                     or (comment.score < self.config['comments']['score_threshold']
                         and not comment.distinguished):
                 self.bot_log('Skipping comment.')
-                continue  # break
+                break
 
             while comment.score in scored_comments.keys():
                 comment.score += 1
