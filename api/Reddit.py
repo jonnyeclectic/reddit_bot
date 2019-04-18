@@ -174,7 +174,7 @@ class RedditBot(FileHelper):
         """
         self.store('\n***{}***\n {}\n\n'.format(post.title, post.selftext))
         self.store('[[{} - {}]]'.format(post.author, post.score), False)
-        self.store(FileHelper.get_dictation_pause(), False)
+        self.store(FileHelper.get_dictation_pause(1000), False)
 
     def store_comment(self, comment):
         """
@@ -184,7 +184,7 @@ class RedditBot(FileHelper):
         """
         self.store('\n* {}\n'.format(comment.body))
         self.store('[[{} - {}]]'.format(comment.author, comment.score), False)
-        self.store(FileHelper.get_dictation_pause(1000), False)
+        self.store(FileHelper.get_dictation_pause(), False)
 
 
 bot = RedditBot()
