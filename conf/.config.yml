@@ -22,7 +22,7 @@ google_drive:
 
 reddit_bot:
  client_id: <your_client_id>
- client_secret: <your_client_secret_
+ client_secret: <your_client_secret_>
  user_agent: '<EXAMPLE:><your_app_deployment_location>:reddit.<your_bot_purpose>:v1 (by /u/<your_reddit_login_username>)'
  username: <your_reddit_login_username>
  password: <your_reddit_login_password>
