@@ -32,6 +32,6 @@ soupsieve==1.9.1
 typing==3.6.6
 update-checker==0.16
 uritemplate==3.0.0
-urllib3==1.24.1
+urllib3==1.24.2
 wcwidth==0.1.7
 websocket-client==0.56.0
