@@ -73,7 +73,7 @@ class RedditBot(FileHelper):
             if isinstance(comment, MoreComments):
                 continue
 
-            if comment.score < self.comment_options['score_threshold'] and not comment.distinguished:
+            if comment.score < 10 and comment.score < self.comment_options['score_threshold']:
                 self.bot_log('Skipping low scored comment: {}.'.format(comment.score))
                 continue
 
