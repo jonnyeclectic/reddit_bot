@@ -1,22 +1,27 @@
 from auth.GoogleAuthentication import GoogleAuthentication
-
 import datetime
 import os
 import shutil
+import subprocess
 import yaml
 
 
 class FileHelper:
 
     def __init__(self):
+        self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
+        self.update_filenames_with_timestamp()
+
+    def get_values_from_configs(self):
+        """
+        Get config values pertaining to files.
+        """
         self.config = yaml.safe_load(open("conf/.config.yml"))
         self.text_file = self.config['files']['text_filename']
         self.mp4_file = self.config['files']['audio_filename']
         self.logs_file = self.config['files']['logs_filename']
         self.destination = self.config['destination']
-        self.timestamp = None
-
-        self.update_filenames_with_timestamp()
+        self.play_audio_flag = self.config['play_audio_flag']
 
     def remove_file(self, filename):
         """
@@ -40,6 +45,8 @@ class FileHelper:
                                                     self.mp4_file,
                                                     self.destination,
                                                     self.text_file))
+        if self.play_audio_flag:
+            self.play_audio()
 
     @staticmethod
     def get_dictation_pause(duration=650):
@@ -132,8 +139,13 @@ class FileHelper:
         """
          Updates filenames with timestamp.
          """
-        self.timestamp = datetime.datetime.now().strftime("%I:%M%p")
         for filename_variable in ['text_file', 'mp4_file', 'logs_file']:
             filename = getattr(self, filename_variable)
             updated_filename = "{}_{}".format(self.timestamp, filename)
             setattr(self, filename_variable, updated_filename)
+
+    def play_audio(self):
+        """
+         Play audio file locally, then close player.
+         """
+        subprocess.call(['ffplay', '-autoexit', '{}/{}'.format(self.destination, self.mp4_file)])
